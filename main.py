@@ -53,10 +53,29 @@ class CardShuffler:
         main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
         card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
-        # Generate a deck of cards from our cards.py library
-        deck = generate_deck()
+        # x_add = 10
+        # y_add = 10
+        # y_counter = 0
+        # for card in deck:
+        #     y_counter += 1
+        #     card_image = ImageTk.PhotoImage(card_images[card.getNameForImage()])
+        #     card_image_container = tk.Label(image=card_image)
+        #     card_image_container.image = card_image
 
-        # Loading the main logo
+        #     card_image_container.place(in_=card_frame, x=x_add % 800, y=y_add)
+        #     x_add += 80
+        #     y_add += (110 if y_counter % 10 == 0 else 0)
+        self.display_card_images(card_frame, deck)
+        card_frame.pack(side="top", anchor="w")
+        main_frame.pack()
+        main_frame.pack_propagate(0)
+
+
+        
+    def close_windows(self):
+        self.master.destroy()
+
+    def display_card_images(self, frame, deck):
         x_add = 10
         y_add = 10
         y_counter = 0
@@ -66,18 +85,9 @@ class CardShuffler:
             card_image_container = tk.Label(image=card_image)
             card_image_container.image = card_image
 
-            card_image_container.place(in_=card_frame, x=x_add % 800, y=y_add)
+            card_image_container.place(in_=frame, x=x_add % 800, y=y_add)
             x_add += 80
             y_add += (110 if y_counter % 10 == 0 else 0)
-
-        card_frame.pack(side="top", anchor="w")
-        main_frame.pack()
-        main_frame.pack_propagate(0)
-
-
-        
-    def close_windows(self):
-        self.master.destroy()
 
 
 
