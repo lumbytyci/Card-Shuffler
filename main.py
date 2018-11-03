@@ -1,6 +1,7 @@
 import tkinter as tk
 import tkinter.font as tkFont
 from cards import *
+import random
 
 from PIL import Image, ImageTk
 
@@ -19,6 +20,7 @@ for card in deck:
 
 class CardShuffler:
     root = tk.Tk()
+    card_frame = None
 
     def __init__(self):
     
@@ -51,15 +53,15 @@ class CardShuffler:
         
         # Creating the new frame where all the content will go
         main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
-        card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
+        self.card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
         # Display all 52 cards
-        self.display_card_images(card_frame, deck)
+        self.display_card_images(self.card_frame, deck)
 
-        shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(card_frame, main_frame));
+        shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(self.card_frame, main_frame));
         shuffle_button.place(in_=main_frame, anchor="c", x=1000, y=50)
 
-        card_frame.pack(side="top", anchor="w")
+        self.card_frame.pack(side="top", anchor="w")
         main_frame.pack()
         main_frame.pack_propagate(0)
 
@@ -67,9 +69,12 @@ class CardShuffler:
         frame.destroy();
         new_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
         
-        
+        random.shuffle(deck)
+
+        self.display_card_images(new_frame, deck)        
 
         new_frame.pack(side="top", anchor="w")
+        self.card_frame = new_frame
 
     def close_windows(self):
         self.master.destroy()
