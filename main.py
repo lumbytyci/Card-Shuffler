@@ -53,25 +53,24 @@ class CardShuffler:
         main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
         card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
-        # x_add = 10
-        # y_add = 10
-        # y_counter = 0
-        # for card in deck:
-        #     y_counter += 1
-        #     card_image = ImageTk.PhotoImage(card_images[card.getNameForImage()])
-        #     card_image_container = tk.Label(image=card_image)
-        #     card_image_container.image = card_image
-
-        #     card_image_container.place(in_=card_frame, x=x_add % 800, y=y_add)
-        #     x_add += 80
-        #     y_add += (110 if y_counter % 10 == 0 else 0)
+        # Display all 52 cards
         self.display_card_images(card_frame, deck)
+
+        shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(card_frame, main_frame));
+        shuffle_button.place(in_=main_frame, anchor="c", x=1000, y=50)
+
         card_frame.pack(side="top", anchor="w")
         main_frame.pack()
         main_frame.pack_propagate(0)
 
-
+    def shuffle_cards(self, frame, main_frame):
+        frame.destroy();
+        new_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
         
+        
+
+        new_frame.pack(side="top", anchor="w")
+
     def close_windows(self):
         self.master.destroy()
 
@@ -88,8 +87,6 @@ class CardShuffler:
             card_image_container.place(in_=frame, x=x_add % 800, y=y_add)
             x_add += 80
             y_add += (110 if y_counter % 10 == 0 else 0)
-
-
-
+        
 CardShuffler().root.mainloop()
     
