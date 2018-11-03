@@ -2,12 +2,15 @@ import tkinter as tk
 import tkinter.font as tkFont
 from cards import *
 import random
+from tkinter import messagebox
 
 from PIL import Image, ImageTk
 
 
  # Generate a deck of cards from our cards.py library
 deck = generate_deck()
+
+sampled_deck = []
 
 # Dict that holds card images and their names
 card_images = {}
@@ -21,6 +24,7 @@ for card in deck:
 class CardShuffler:
     root = tk.Tk()
     card_frame = None
+    card_number_spinner = None
 
     def __init__(self):
     
@@ -61,6 +65,12 @@ class CardShuffler:
         shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(self.card_frame, main_frame));
         shuffle_button.place(in_=main_frame, anchor="c", x=1000, y=50)
 
+        # Creating and setting the default value of the sample spinbox
+        spinner_def_value = tk.StringVar(self.root)
+        spinner_def_value.set("52")
+        self.card_number_spinner = tk.Spinbox(main_frame, width = 10, from_=5, to=52, textvariable=spinner_def_value)
+        self.card_number_spinner.place(in_=main_frame, anchor="c", x=1150, y=50)
+
         self.card_frame.pack(side="top", anchor="w")
         main_frame.pack()
         main_frame.pack_propagate(0)
@@ -69,9 +79,21 @@ class CardShuffler:
         frame.destroy();
         new_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
         
+        # Shufle the deck
         random.shuffle(deck)
 
-        self.display_card_images(new_frame, deck)        
+        # Pick a sample of the deck, based on the spinner value (5 to 52) cards
+        sample_size = 52
+        if self.card_number_spinner.get().isdigit() == False:
+            messagebox.showerror("Sample Error", "Card sample size is invalid, 52 was used.")
+        elif (int(self.card_number_spinner.get()) < 5) or (int(self.card_number_spinner.get()) > 52):
+            messagebox.showerror("Sample Error", "Card sample size is invalid, 52 was used.")
+        else:
+            sample_size = int(self.card_number_spinner.get())
+
+        sampled_deck = random.sample(deck, sample_size)
+
+        self.display_card_images(new_frame, sampled_deck)        
 
         new_frame.pack(side="top", anchor="w")
         self.card_frame = new_frame
