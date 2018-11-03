@@ -1,13 +1,29 @@
 import tkinter as tk
 import tkinter.font as tkFont
+from cards import *
 
 from PIL import Image, ImageTk
+
+
+ # Generate a deck of cards from our cards.py library
+deck = generate_deck()
+
+# Dict that holds card images and their names
+card_images = {}
+
+# Loading all images to a dictionary
+for card in deck:
+    image = Image.open("resources/images/" + card.getNameForImage() + ".png")
+    image = image.resize((70, 100), Image.ANTIALIAS)
+    card_images.update({card.getNameForImage() : image})
 
 class CardShuffler:
     root = tk.Tk()
 
     def __init__(self):
     
+        self.root.resizable(False, False) # Prevent root from being resizable
+        self.root.iconbitmap("resources/cards_icon.ico")
         #custom font created for the main menu buttons
         main_menu_fonts = tkFont.Font(size=25, family="Arial Bold")
 
@@ -34,16 +50,31 @@ class CardShuffler:
         self.frame.destroy()
         
         # Creating the new frame where all the content will go
-        main_frame = tk.Frame(self.master, width=1280, height=720, background="#eee")
+        main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
+        card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
+        # Generate a deck of cards from our cards.py library
+        deck = generate_deck()
 
-       
-       
-       
-       
-       
-        main_frame.pack(fill="both", expand=True)
-        
+        # Loading the main logo
+        x_add = 10
+        y_add = 10
+        y_counter = 0
+        for card in deck:
+            y_counter += 1
+            card_image = ImageTk.PhotoImage(card_images[card.getNameForImage()])
+            card_image_container = tk.Label(image=card_image)
+            card_image_container.image = card_image
+
+            card_image_container.place(in_=card_frame, x=x_add % 800, y=y_add)
+            x_add += 80
+            y_add += (110 if y_counter % 10 == 0 else 0)
+
+        card_frame.pack(side="top", anchor="w")
+        main_frame.pack()
+        main_frame.pack_propagate(0)
+
+
         
     def close_windows(self):
         self.master.destroy()
