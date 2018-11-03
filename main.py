@@ -10,10 +10,13 @@ from PIL import Image, ImageTk
  # Generate a deck of cards from our cards.py library
 deck = generate_deck()
 
-sampled_deck = []
+# Set sample deck initially to deck
+sampled_deck = deck
 
 # Dict that holds card images and their names
 card_images = {}
+
+
 
 # Loading all images to a dictionary
 for card in deck:
@@ -21,10 +24,16 @@ for card in deck:
     image = image.resize((70, 100), Image.ANTIALIAS)
     card_images.update({card.getNameForImage() : image})
 
+# Loading the default card image (backside)
+default_card_image = Image.open("resources/images/red_back.png")
+default_card_image = default_card_image.resize((70, 100), Image.ANTIALIAS)
+
 class CardShuffler:
     root = tk.Tk()
+    sampled_deck = deck
     card_frame = None
     card_number_spinner = None
+    show_cards = True
 
     def __init__(self):
     
@@ -60,10 +69,14 @@ class CardShuffler:
         self.card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
         # Display all 52 cards
-        self.display_card_images(self.card_frame, deck)
+        self.display_card_images(self.card_frame, deck, self.show_cards)
+
 
         shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(self.card_frame, main_frame));
         shuffle_button.place(in_=main_frame, anchor="c", x=1000, y=50)
+
+        hide_button = tk.Button(text="Show/Hide Cards", command=lambda: self.toggle_show_cards(self.card_frame, main_frame));
+        hide_button.place(in_=main_frame, anchor="c", x=1000, y=150)
 
         # Creating and setting the default value of the sample spinbox
         spinner_def_value = tk.StringVar(self.root)
@@ -74,6 +87,17 @@ class CardShuffler:
         self.card_frame.pack(side="top", anchor="w")
         main_frame.pack()
         main_frame.pack_propagate(0)
+
+    def toggle_show_cards(self, frame, main_frame):
+        frame.destroy();
+        new_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
+        
+        #Toggle show/hide by inverting the boolean
+        self.show_cards = not self.show_cards
+        
+        self.display_card_images(new_frame, self.sampled_deck, self.show_cards)  
+        new_frame.pack(side="top", anchor="w")
+        self.card_frame = new_frame
 
     def shuffle_cards(self, frame, main_frame):
         frame.destroy();
@@ -90,10 +114,9 @@ class CardShuffler:
             messagebox.showerror("Sample Error", "Card sample size is invalid, 52 was used.")
         else:
             sample_size = int(self.card_number_spinner.get())
+        self.sampled_deck = random.sample(deck, sample_size)
 
-        sampled_deck = random.sample(deck, sample_size)
-
-        self.display_card_images(new_frame, sampled_deck)        
+        self.display_card_images(new_frame, self.sampled_deck, self.show_cards)        
 
         new_frame.pack(side="top", anchor="w")
         self.card_frame = new_frame
@@ -101,16 +124,19 @@ class CardShuffler:
     def close_windows(self):
         self.master.destroy()
 
-    def display_card_images(self, frame, deck):
+    def display_card_images(self, frame, deck, showCards):
         x_add = 10
         y_add = 10
         y_counter = 0
         for card in deck:
             y_counter += 1
-            card_image = ImageTk.PhotoImage(card_images[card.getNameForImage()])
+            if showCards == True:
+                card_image = ImageTk.PhotoImage(card_images[card.getNameForImage()])
+            else:
+                card_image = ImageTk.PhotoImage(default_card_image)
+
             card_image_container = tk.Label(image=card_image)
             card_image_container.image = card_image
-
             card_image_container.place(in_=frame, x=x_add % 800, y=y_add)
             x_add += 80
             y_add += (110 if y_counter % 10 == 0 else 0)
