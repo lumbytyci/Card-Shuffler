@@ -5,6 +5,9 @@ import random
 from tkinter import messagebox
 from tkinter import ttk
 
+import numpy as np
+import matplotlib.pyplot as plt
+
 from PIL import Image, ImageTk
 
 
@@ -84,8 +87,8 @@ class CardShuffler:
         hide_button = tk.Button(text="Show/Hide Cards",width = 29, command=lambda: self.toggle_show_cards(self.card_frame, self.main_frame));
         hide_button.place(in_=self.main_frame, anchor="c", x=1078, y=145)
 
-        hide_button = tk.Button(text="Pick Random Card",width = 29, command=self.pick_random_card);
-        hide_button.place(in_=self.main_frame, anchor="c", x=1078, y=200)
+        pick_random_card_btn = tk.Button(text="Pick Random Card",width = 29, command=self.pick_random_card);
+        pick_random_card_btn.place(in_=self.main_frame, anchor="c", x=1078, y=200)
 
         # Sample size label
         sample_label = tk.Label(text="Sample size: ")   
@@ -117,6 +120,9 @@ class CardShuffler:
         search_for_card_btn = tk.Button(text="Search for Card",width = 29, command = self.search_for_card);
         search_for_card_btn.place(in_=self.main_frame, anchor="c", x=1078, y=500)
 
+        search_for_card_experiment_btn = tk.Button(text="Search for Card Experiment",width = 29, command = self.search_for_card_experiment);
+        search_for_card_experiment_btn.place(in_=self.main_frame, anchor="c", x=1078, y=550)
+
         # Creating and setting the default value of the sample spinbox
         spinner_def_value = tk.StringVar(self.root)
         spinner_def_value.set("52")
@@ -126,6 +132,37 @@ class CardShuffler:
         self.card_frame.pack(side="top", anchor="w")
         self.main_frame.pack()
         self.main_frame.pack_propagate(0)
+
+    def search_for_card_experiment(self):
+        card_value = self.cmb_card_value.get()
+        card_symbol = self.cmb_card_symbol.get()
+
+        full_card_name = card_value + card_symbol
+        card_name = ""
+        if full_card_name[1].isdigit():
+            card_name = full_card_name[0:3]
+        else:
+            card_name = full_card_name[0:2]
+
+
+        # Check if card is available in the sampled deck
+        if not card_name in (card.getNameForImage() for card in self.sampled_deck):
+             messagebox.showerror("Card Choice Invalid", "The chosen card is not available in the sampled deck!")
+             return
+
+        results = []
+        # Search sampled deck for card
+        for i in range (1,1001):
+            search_counter = 1
+            while random.choice(self.sampled_deck).getNameForImage() != card_name:
+                search_counter += 1
+            results.append(search_counter)
+
+
+        plt.scatter(range(1,1001), results)
+        plt.show()
+
+
 
     def search_for_card(self):
         card_value = self.cmb_card_value.get()
@@ -137,7 +174,6 @@ class CardShuffler:
             card_name = full_card_name[0:3]
         else:
             card_name = full_card_name[0:2]
-        print(card_name)
 
 
         # Check if card is available in the sampled deck
