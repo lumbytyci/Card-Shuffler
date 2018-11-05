@@ -34,6 +34,7 @@ class CardShuffler:
     card_frame = None
     card_number_spinner = None
     show_cards = True
+    main_frame = None
 
     def __init__(self):
     
@@ -65,28 +66,52 @@ class CardShuffler:
         self.frame.destroy()
         
         # Creating the new frame where all the content will go
-        main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
-        self.card_frame = tk.Frame(main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
+        self.main_frame = tk.Frame(self.master, width=1280, height=720, background="#ccc")
+        self.card_frame = tk.Frame(self.main_frame, height = 800, width = 900, bg = "#eee", borderwidth=2)
        
         # Display all 52 cards
         self.display_card_images(self.card_frame, deck, self.show_cards)
 
 
-        shuffle_button = tk.Button(text="Shuffle Deck", command=lambda: self.shuffle_cards(self.card_frame, main_frame));
-        shuffle_button.place(in_=main_frame, anchor="c", x=1000, y=50)
+        shuffle_button = tk.Button(text="Shuffle Deck",width = 29, command=lambda: self.shuffle_cards(self.card_frame, self.main_frame));
+        shuffle_button.place(in_=self.main_frame, anchor="c", x=1078, y=100)
 
-        hide_button = tk.Button(text="Show/Hide Cards", command=lambda: self.toggle_show_cards(self.card_frame, main_frame));
-        hide_button.place(in_=main_frame, anchor="c", x=1000, y=150)
+        hide_button = tk.Button(text="Show/Hide Cards",width = 29, command=lambda: self.toggle_show_cards(self.card_frame, self.main_frame));
+        hide_button.place(in_=self.main_frame, anchor="c", x=1078, y=145)
+
+        hide_button = tk.Button(text="Pick Random Card",width = 29, command=self.pick_random_card);
+        hide_button.place(in_=self.main_frame, anchor="c", x=1078, y=200)
+
+        # Sample size label
+        sample_label = tk.Label(text="Sample size: ")   
+        sample_label.place(in_=self.main_frame, anchor="c", x=1000, y=50)
 
         # Creating and setting the default value of the sample spinbox
         spinner_def_value = tk.StringVar(self.root)
         spinner_def_value.set("52")
-        self.card_number_spinner = tk.Spinbox(main_frame, width = 10, from_=5, to=52, textvariable=spinner_def_value)
-        self.card_number_spinner.place(in_=main_frame, anchor="c", x=1150, y=50)
+        self.card_number_spinner = tk.Spinbox(self.main_frame, width = 10, from_=5, to=52, textvariable=spinner_def_value)
+        self.card_number_spinner.place(in_=self.main_frame, anchor="c", x=1150, y=50)
 
         self.card_frame.pack(side="top", anchor="w")
-        main_frame.pack()
-        main_frame.pack_propagate(0)
+        self.main_frame.pack()
+        self.main_frame.pack_propagate(0)
+
+
+    def display_random_card(self, card):
+        
+        card = card_images[card.getNameForImage()]
+        card = card.resize((100, 150), Image.ANTIALIAS)
+
+        card_image = ImageTk.PhotoImage(card)
+        card_image_container = tk.Label(image=card_image, borderwidth=0, bg="#eee")
+        card_image_container.image = card_image
+        card_image_container.place(in_=self.main_frame, x=1030, y=230)
+        
+
+    def pick_random_card(self):
+        random_card = random.choice(self.sampled_deck)
+        self.display_random_card(random_card)
+
 
     def toggle_show_cards(self, frame, main_frame):
         frame.destroy();
