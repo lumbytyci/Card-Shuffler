@@ -107,16 +107,18 @@ class CardShuffler:
         self.picking_counter_val_label = tk.Label(text="", font=main_menu_fonts, bg="#ccc", fg="#222")   
         self.picking_counter_val_label.place(in_=self.main_frame, anchor="c", x=1185, y=620)
 
-        self.cmb_card_value = ttk.Combobox(width = 10, values=["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"])
+        self.cmb_card_value = ttk.Combobox(state='readonly', width = 10, values=["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"])
+        self.cmb_card_value.bind("<<ComboboxSelected>>", self.cmb_changed_event)
         self.cmb_card_value.grid(column=0, row=1)
         self.cmb_card_value.current(1)
         self.cmb_card_value.place(in_=self.main_frame, anchor="c", x=1010, y=460)
 
-        self.cmb_card_symbol = ttk.Combobox(width = 10, values=["Heart", "Diamond", "Spade", "Club"])
+        self.cmb_card_symbol = ttk.Combobox(state='readonly', width = 10, values=["Heart", "Diamond", "Spade", "Club"])
+        self.cmb_card_symbol.bind("<<ComboboxSelected>>", self.cmb_changed_event)
         self.cmb_card_symbol.grid(column=0, row=1)
         self.cmb_card_symbol.current(1)
         self.cmb_card_symbol.place(in_=self.main_frame, anchor="c", x=1145, y=460)
-
+        
         search_for_card_btn = tk.Button(text="Search for Card",width = 29, command = self.search_for_card);
         search_for_card_btn.place(in_=self.main_frame, anchor="c", x=1078, y=500)
 
@@ -132,6 +134,17 @@ class CardShuffler:
         self.card_frame.pack(side="top", anchor="w")
         self.main_frame.pack()
         self.main_frame.pack_propagate(0)
+
+    def cmb_changed_event(self, eventObject):
+        card_name = self.get_card_name_from_combobox()
+        selected_card = None
+
+        for card in deck:
+            if card.getNameForImage() == card_name:
+                selected_card = card
+                break
+
+        self.display_random_card(selected_card)
 
 
     def get_card_name_from_combobox(self):
