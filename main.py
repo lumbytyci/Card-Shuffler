@@ -133,7 +133,8 @@ class CardShuffler:
         self.main_frame.pack()
         self.main_frame.pack_propagate(0)
 
-    def search_for_card_experiment(self):
+
+    def get_card_name_from_combobox(self):
         card_value = self.cmb_card_value.get()
         card_symbol = self.cmb_card_symbol.get()
 
@@ -143,6 +144,13 @@ class CardShuffler:
             card_name = full_card_name[0:3]
         else:
             card_name = full_card_name[0:2]
+
+        return card_name    
+
+    def search_for_card_experiment(self):
+
+        # Get Card name from the combo box selection
+        card_name = self.get_card_name_from_combobox()
 
 
         # Check if card is available in the sampled deck
@@ -165,15 +173,9 @@ class CardShuffler:
 
 
     def search_for_card(self):
-        card_value = self.cmb_card_value.get()
-        card_symbol = self.cmb_card_symbol.get()
-
-        full_card_name = card_value + card_symbol
-        card_name = ""
-        if full_card_name[1].isdigit():
-            card_name = full_card_name[0:3]
-        else:
-            card_name = full_card_name[0:2]
+        
+        # Get Card name from the combo box selection
+        card_name = self.get_card_name_from_combobox()
 
 
         # Check if card is available in the sampled deck
