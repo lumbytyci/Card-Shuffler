@@ -3,6 +3,7 @@ import tkinter.font as tkFont
 from cards import *
 import random
 from tkinter import messagebox
+from tkinter import ttk
 
 from PIL import Image, ImageTk
 
@@ -35,6 +36,10 @@ class CardShuffler:
     card_number_spinner = None
     show_cards = True
     main_frame = None
+    cmb_card_value = None
+    cmb_card_symbol = None
+    picking_counter_label = None
+    picking_counter_val_label = None
 
     def __init__(self):
     
@@ -86,6 +91,32 @@ class CardShuffler:
         sample_label = tk.Label(text="Sample size: ")   
         sample_label.place(in_=self.main_frame, anchor="c", x=1000, y=50)
 
+        # Sample size label
+        sample_label = tk.Label(text="Choose a card: ")   
+        sample_label.place(in_=self.main_frame, anchor="c", x=1010, y=420)
+
+        # How many times did it pick randomly label
+        main_menu_fonts = tkFont.Font(size=15, family="Arial Bold")
+        self.picking_counter_label = tk.Label(text="Draw Counter: ", font=main_menu_fonts, bg="#ccc", fg="#222")   
+        self.picking_counter_label.place(in_=self.main_frame, anchor="c", x=1045, y=620)
+
+        # How many times did it pick randomly label
+        self.picking_counter_val_label = tk.Label(text="", font=main_menu_fonts, bg="#ccc", fg="#222")   
+        self.picking_counter_val_label.place(in_=self.main_frame, anchor="c", x=1185, y=620)
+
+        self.cmb_card_value = ttk.Combobox(width = 10, values=["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"])
+        self.cmb_card_value.grid(column=0, row=1)
+        self.cmb_card_value.current(1)
+        self.cmb_card_value.place(in_=self.main_frame, anchor="c", x=1010, y=460)
+
+        self.cmb_card_symbol = ttk.Combobox(width = 10, values=["Heart", "Diamond", "Spade", "Club"])
+        self.cmb_card_symbol.grid(column=0, row=1)
+        self.cmb_card_symbol.current(1)
+        self.cmb_card_symbol.place(in_=self.main_frame, anchor="c", x=1145, y=460)
+
+        search_for_card_btn = tk.Button(text="Search for Card",width = 29, command = self.search_for_card);
+        search_for_card_btn.place(in_=self.main_frame, anchor="c", x=1078, y=500)
+
         # Creating and setting the default value of the sample spinbox
         spinner_def_value = tk.StringVar(self.root)
         spinner_def_value.set("52")
@@ -95,6 +126,35 @@ class CardShuffler:
         self.card_frame.pack(side="top", anchor="w")
         self.main_frame.pack()
         self.main_frame.pack_propagate(0)
+
+    def search_for_card(self):
+        card_value = self.cmb_card_value.get()
+        card_symbol = self.cmb_card_symbol.get()
+
+        full_card_name = card_value + card_symbol
+        card_name = ""
+        if full_card_name[1].isdigit():
+            card_name = full_card_name[0:3]
+        else:
+            card_name = full_card_name[0:2]
+        print(card_name)
+
+
+        # Check if card is available in the sampled deck
+        if not card_name in (card.getNameForImage() for card in self.sampled_deck):
+             messagebox.showerror("Card Choice Invalid", "The chosen card is not available in the sampled deck!")
+             return
+
+
+        # Search sampled deck for card
+        search_counter = 1
+
+        while random.choice(self.sampled_deck).getNameForImage() != card_name:
+            search_counter += 1
+
+        self.picking_counter_val_label["text"] = str(search_counter)
+
+
 
 
     def display_random_card(self, card):
@@ -135,11 +195,12 @@ class CardShuffler:
         sample_size = 52
         if self.card_number_spinner.get().isdigit() == False:
             messagebox.showerror("Sample Error", "Card sample size is invalid, 52 was used.")
-        elif (int(self.card_number_spinner.get()) < 5) or (int(self.card_number_spinner.get()) > 52):
+        elif (int(self.card_number_spinner.get()) < 1) or (int(self.card_number_spinner.get()) > 52):
             messagebox.showerror("Sample Error", "Card sample size is invalid, 52 was used.")
         else:
             sample_size = int(self.card_number_spinner.get())
         self.sampled_deck = random.sample(deck, sample_size)
+
 
         self.display_card_images(new_frame, self.sampled_deck, self.show_cards)        
 
