@@ -158,7 +158,7 @@ class CardShuffler:
                 search_counter += 1
             results.append(search_counter)
 
-
+        
         plt.scatter(range(1,1001), results)
         plt.show()
 
@@ -195,13 +195,12 @@ class CardShuffler:
 
     def display_random_card(self, card):
         
-        card = card_images[card.getNameForImage()]
-        card = card.resize((100, 150), Image.ANTIALIAS)
-
+        card = Image.open("resources/images/" + card.getNameForImage() + ".png")
+        card = card.resize((110, 160), Image.ANTIALIAS)
         card_image = ImageTk.PhotoImage(card)
-        card_image_container = tk.Label(image=card_image, borderwidth=0, bg="#eee")
+        card_image_container = tk.Label(image=card_image, borderwidth=0, bg="#ccc")
         card_image_container.image = card_image
-        card_image_container.place(in_=self.main_frame, x=1030, y=230)
+        card_image_container.place(in_=self.main_frame, x=1020, y=230)
         
 
     def pick_random_card(self):
