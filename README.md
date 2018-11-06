@@ -15,3 +15,5 @@ You need to have some very common python libraries pre-installed before you can 
 
 3. numpy - Python scientific computing 
 >pip install numpy
+
+![Screenshot](https://github.com/lumbytyci/Card-Shuffler/blob/master/resources/screenshot.png)
